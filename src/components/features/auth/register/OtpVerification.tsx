@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 import { resendOtp, verifyOtp } from "~/actions/auth";
-import { usePostAuthRedirect } from "@/hooks/use-post-auth-redirect";
 import {
   isResendOtpSuccess,
   isVerifyOtpSuccess,
@@ -19,10 +18,7 @@ import { isSignInFailure, getLoginErrorMessage } from "@/lib/login-errors";
 import { Button } from "~/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
-import {
-  clearRegisterVerifyEmail,
-  consumeRegisterVerifyCooldown,
-} from "~/lib/register-verify-storage";
+import { consumeRegisterVerifyCooldown } from "~/lib/register-verify-storage";
 import { OtpFormSchema } from "@/schema/auth.schema";
 import { cn } from "@/lib/utils";
 
@@ -35,8 +31,6 @@ const formatTimer = (seconds: number) => {
 };
 
 const OTPVerification = ({ email }: { email: string }) => {
-  usePostAuthRedirect();
-
   const [secondsLeft, setSecondsLeft] = useState(() =>
     consumeRegisterVerifyCooldown(),
   );
@@ -100,11 +94,9 @@ const OTPVerification = ({ email }: { email: string }) => {
           toast.error("Verification complete", {
             description: `${getLoginErrorMessage(signInResult)} Try signing in with your password.`,
           });
-          clearRegisterVerifyEmail();
           return;
         }
 
-        clearRegisterVerifyEmail();
         toast.success("Email verified", {
           description: result.message ?? "Welcome to Seil.",
         });
